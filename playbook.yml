@@ -1,0 +1,18 @@
+---
+- name: Delegate a controller-side file update
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Gather hostnames loop
+      ansible.builtin.set_fact:
+        my_hosts: "{{ my_hosts | default([]) + [hostvars[item].ansible_hostname] }}"
+      loop: "{{ groups['all'] }}"
+      run_once: true
+
+    - name: Report hostnames
+      ansible.builtin.template:
+        src: report.txt.j2
+        dest: /home/ansible/perplexity/05-5-challenges-seen-EX294-exam/ansible-challenge-19/report.txt
+      delegate_to: localhost
+      run_once: true
